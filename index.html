@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Robin's Task List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merienda:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #8A2481;
+    --burgundy-soft: #F4E4F0;
+    --accent-contrast: #ffffff;
+    --bg: #FAF7F9;
+    --surface: #ffffff;
+    --surface-2: #F6F0F4;
+    --ink: #2A2228;
+    --ink-soft: #8A818A;
+    --line: #ECE6EA;
+    --done: #B6ADB3;
+    --maybe-border: #C9A9C2;
+
+    --before: #8A2481;
+    --before-soft: #F4E4F0;
+    --while: #B85BA6;
+    --while-soft: #F7EAF4;
+    --after: #E0A8D4;
+    --after-soft: #FBF2F9;
+    --after-ink: #7A3A6E;
+
+    --head-before: #8A244E;
+    --head-while: #B5567A;
+    --head-after: #E4AFC0;
+    --head-after-ink: #7A2E44;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 18px 8px;
+    flex-shrink: 0;
+  }
+  .app-name { font-family: 'Merienda', cursive; font-size: 17px; font-weight: 700; color: var(--burgundy); }
+  .top-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 37px; height: 37px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .screen { flex: 1; overflow-y: auto; padding: 4px 16px 24px; -webkit-overflow-scrolling: touch; }
+  .screen::-webkit-scrollbar { display: none; }
+
+  .date-line { font-family: 'Merienda', cursive; font-size: 23px; font-weight: 700; margin: 2px 0 3px; }
+  .date-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
+
+  /* progress bar */
+  .progress-wrap { margin: 4px 0 16px; }
+  .progress-track { height: 7px; background: var(--burgundy-soft); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--burgundy); border-radius: 100px; width: 0%; transition: width 0.35s ease; }
+  .progress-label { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+  .busy-tag {
+    background: var(--burgundy-soft); color: var(--burgundy);
+    font-size: 13px; font-weight: 600;
+    padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; display: none;
+  }
+  .busy-tag.show { display: block; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--burgundy); margin: 18px 2px 7px;
+  }
+  .section-label.first { margin-top: 2px; }
+
+  .phase-tag {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: var(--accent-contrast); background: var(--before);
+    padding: 4px 11px; border-radius: 100px; margin: 18px 0 8px;
+  }
+  .phase-tag.while { background: var(--while); }
+  .phase-tag.after { background: var(--after); color: var(--after-ink); }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 15px; overflow: hidden; margin-bottom: 10px; }
+  .cat-head {
+    padding: 10px 14px; font-family: 'Merienda', cursive; font-weight: 700; font-size: 13px;
+    display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line);
+    color: var(--accent-contrast);
+  }
+  .cat-head.before { background: var(--head-before); }
+  .cat-head.while { background: var(--head-while); }
+  .cat-head.after { background: var(--head-after); color: var(--head-after-ink); }
+  .cat-count { font-size: 11px; font-weight: 500; opacity: 0.85; }
+
+  .row {
+    display: flex; align-items: flex-start; gap: 9px;
+    padding: 12px 12px; border-bottom: 1px solid var(--line); position: relative;
+  }
+  .row:last-of-type { border-bottom: none; }
+  .row.sub { padding-left: 40px; padding-top: 9px; padding-bottom: 9px; }
+  .row.pending { border-left: 3px solid var(--burgundy); padding-left: 9px; }
+  .row.dragging { opacity: 0.3; }
+  .row.drop-target { background: var(--surface-2); }
+
+  .handle { color: var(--ink-soft); opacity: 0.4; font-size: 15px; padding: 2px 0 6px 0; cursor: grab; touch-action: none; flex-shrink: 0; }
+
+  .box {
+    width: 22px; height: 22px; border-radius: 7px; border: 2px solid #C4B9C1; flex-shrink: 0;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .box.sm { width: 19px; height: 19px; border-radius: 6px; }
+  .box.done { background: var(--burgundy); border-color: var(--burgundy); }
+  .box.maybe { border-style: dashed; border-color: var(--maybe-border); transform: scale(0.72); }
+  .box svg { width: 12px; height: 12px; opacity: 0; }
+  .box.done svg { opacity: 1; }
+
+  .txt { flex: 1; font-size: 14.5px; line-height: 1.35; cursor: text; word-break: break-word; padding-top: 1px; }
+  .row.sub .txt { font-size: 13.5px; color: var(--ink); opacity: 0.82; }
+  .txt.done { color: var(--done); text-decoration: line-through; }
+  .txt.maybe { color: var(--maybe-border); font-style: italic; }
+  .done-date { font-size: 11px; color: var(--ink-soft); margin-left: 6px; white-space: nowrap; }
+
+  .edit-input { flex: 1; font-size: 14.5px; border: none; border-bottom: 1.5px solid var(--burgundy); background: transparent; color: var(--ink); padding: 1px 0; }
+  .edit-input:focus { outline: none; }
+  .nest-btn {
+    flex-shrink: 0; font-size: 12px; font-weight: 600; color: var(--burgundy); background: var(--burgundy-soft);
+    border-radius: 8px; padding: 5px 9px; cursor: pointer; white-space: nowrap; align-self: center;
+  }
+
+  .arrows { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; padding-top: 2px; }
+  .arrow-btn { font-size: 9px; color: var(--ink-soft); cursor: pointer; line-height: 0.9; padding: 1px 3px; opacity: 0.5; font-weight: 300; }
+  .arrow-btn:active { opacity: 1; color: var(--burgundy); }
+
+  .star { flex-shrink: 0; font-size: 18px; color: #D4C8D0; cursor: pointer; line-height: 1; padding: 2px 3px 6px 3px; }
+  .star.on { color: var(--burgundy); }
+  .tmrw-btn { flex-shrink: 0; font-size: 16px; color: var(--ink-soft); cursor: pointer; line-height: 1; padding: 2px 3px 6px 3px; opacity: 0.7; }
+  .tmrw-btn:active { opacity: 1; color: var(--burgundy); }
+
+  .del { flex-shrink: 0; font-size: 16px; color: #D8CDD4; cursor: pointer; padding: 0 2px 6px 4px; line-height: 1; }
+
+  .add-line { padding: 9px 12px; }
+  .add-toggle { font-size: 12.5px; color: var(--burgundy); font-weight: 600; cursor: pointer; }
+  .add-inline { display: none; gap: 8px; margin-top: 6px; }
+  .add-inline.show { display: flex; }
+  .add-inline input { flex: 1; border: none; background: var(--surface-2); border-radius: 9px; padding: 9px 10px; font-size: 13.5px; color: var(--ink); }
+  .add-inline button { background: var(--burgundy); color: var(--accent-contrast); border: none; border-radius: 9px; width: 34px; font-size: 17px; cursor: pointer; }
+
+  .empty { font-size: 12.5px; color: var(--ink-soft); font-style: italic; padding: 12px 14px; }
+
+  .tabbar { display: flex; background: var(--surface); border-top: 1px solid var(--line); flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom); }
+  .tab { flex: 1; text-align: center; padding: 9px 4px 10px; font-size: 11px; color: var(--ink-soft); cursor: pointer; min-height: 52px; }
+  .tab .ic { font-size: 19px; display: block; margin-bottom: 2px; line-height: 1; }
+  .tab.active { color: var(--burgundy); font-weight: 600; }
+
+  .view { display: none; }
+  .view.show { display: block; }
+
+  .ghost { position: fixed; z-index: 999; pointer-events: none; background: var(--surface); border: 1.5px solid var(--burgundy); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; box-shadow: 0 6px 18px rgba(0,0,0,0.18); opacity: 0.95; }
+
+  /* modal for export/import */
+  .data-links { text-align: center; margin: 22px 0 8px; font-size: 12.5px; color: var(--ink-soft); }
+  .data-links span.link { color: var(--burgundy); font-weight: 600; cursor: pointer; }
+  .data-links span.sep { margin: 0 8px; opacity: 0.5; }
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
+  .modal-bg.show { display: flex; }
+  .modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 420px; padding: 18px; max-height: 80vh; display: flex; flex-direction: column; }
+  .modal h3 { font-family: 'Merienda', cursive; font-size: 17px; margin-bottom: 6px; color: var(--ink); }
+  .modal p { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 10px; line-height: 1.4; }
+  .modal textarea { flex: 1; min-height: 140px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; font-size: 12px; font-family: monospace; background: var(--surface-2); color: var(--ink); resize: none; user-select: text; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .modal-actions button { flex: 1; padding: 11px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-primary { background: var(--burgundy); color: var(--accent-contrast); }
+  .btn-ghost { background: var(--surface-2); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="app-name">Robin's Task List</div>
+</div>
+
+<div class="screen" id="screen">
+  <div class="view show" id="view-today"></div>
+  <div class="view" id="view-overall"></div>
+  <div class="view" id="view-social"></div>
+</div>
+
+<div class="tabbar">
+  <div class="tab active" data-tab="today"><span class="ic">◎</span>Today</div>
+  <div class="tab" data-tab="overall"><span class="ic">▤</span>Overall</div>
+  <div class="tab" data-tab="social"><span class="ic">♡</span>Social</div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">Export data</h3>
+    <p id="modalDesc"></p>
+    <textarea id="modalText" spellcheck="false"></textarea>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<script>
+/* Storage: use the browser's own localStorage (Safari, Chrome, etc) so this
+   app remembers your data anywhere it runs, not only inside Claude.
+   Falls back to Claude's window.storage if localStorage isn't available. */
+const store = (function(){
+  let ls = null;
+  try { const k='__t'; window.localStorage.setItem(k,'1'); window.localStorage.removeItem(k); ls = window.localStorage; } catch(e){ ls = null; }
+  if (ls){
+    return {
+      get: async (key) => { const v = ls.getItem(key); return v===null ? null : { key, value:v }; },
+      set: async (key, value) => { ls.setItem(key, value); return { key, value }; }
+    };
+  }
+  // fallback for environments without localStorage (e.g. Claude viewer)
+  return {
+    get: async (key) => { try { return await window.storage.get(key, false); } catch(e){ return null; } },
+    set: async (key, value) => { try { return await window.storage.set(key, value, false); } catch(e){ return null; } }
+  };
+})();
+
+const KEY = 'robins-tasklist-v2';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+const CAT_ORDER = ['Move','Trip Home','Documentation','Health','School + Career','Miscellaneous'];
+const PHASES = [['before','Before Trip',''],['while','While There','while'],['after','After Trip','after']];
+
+let data = null;
+let saveT = null;
+
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function shortDate(iso){ const d = new Date(iso); return (d.getMonth()+1)+'/'+d.getDate(); }
+
+function mk(text, phase, category, extra={}){
+  return Object.assign({
+    id: uid(), text, done:false, doneDate:null,
+    starState:'none', starredDate:null, maybe:false,
+    phase, category, subitems:[]
+  }, extra);
+}
+function sub(text){ return {id:uid(), text, done:false}; }
+
+function seed(){
+  return {
+    lastReset: todayStr(),
+    recurring: [
+      {id:uid(), text:'Clean room', done:false},
+      {id:uid(), text:'Light incense', done:false},
+      {id:uid(), text:'Sort phone', done:false}
+    ],
+    overall: [
+      // BEFORE - Move
+      mk('Pick exact move-out day (18th or 19th)', 'before', 'Move'),
+      mk('Book truck or movers', 'before', 'Move'),
+      mk('Arrange moving boxes (ask grocery produce section)', 'before', 'Move'),
+      mk('Pack India bag first', 'before', 'Move'),
+      mk('Pack kitchen + bathroom items', 'before', 'Move', {subitems:['Fridge magnet','Bidet','Jackets','Bags and jackets outside closet','Air fryer','Face roller (get back from Kris first)'].map(sub)}),
+      mk('Divide remaining stuff (keep vs throw away)', 'before', 'Move'),
+      mk('Reach out to family friend for moving tips', 'before', 'Move'),
+      mk('Remove wall-mounted stuff carefully', 'before', 'Move', {subitems:[sub('Figure out how to remove mirror stickers')]}),
+      mk('Do laundry (running low on clothes)', 'before', 'Move'),
+      mk('Deep clean room + take photos as proof', 'before', 'Move', {maybe:true}),
+      mk('Take photos of room', 'before', 'Move'),
+      mk('Go to gym and sauna at least once', 'before', 'Move'),
+      mk('Tub bath before you leave', 'before', 'Move'),
+      mk('Reply to Arbour email', 'before', 'Move'),
+      mk('Transfer WiFi to roommate\u2019s name', 'before', 'Move', {subitems:[sub('Get this month\u2019s WiFi cost back from roommate')]}),
+      mk('Offer roommate the portable dishwasher', 'before', 'Move'),
+      mk('Get building access card replacement ($100)', 'before', 'Move'),
+      mk('Wash the blanket from move-in', 'before', 'Move'),
+      // BEFORE - Trip Home
+      mk('Book India tickets', 'before', 'Trip Home'),
+      mk('Get study permit from family friend in Kits (needed to re-enter)', 'before', 'Trip Home'),
+      mk('Update US friend about changed plans', 'before', 'Trip Home'),
+      mk('Pick up souvenirs and gifts (Metrotown)', 'before', 'Trip Home'),
+      mk('Contact aunt re: airpod (courier to boyfriend)', 'before', 'Trip Home'),
+      // BEFORE - Documentation
+      mk('Check job applications (LinkedIn)', 'before', 'Documentation', {subitems:[sub('Note real application deadlines')]}),
+      // BEFORE - Health
+      mk('MSP reapplication follow-up', 'before', 'Health'),
+      mk('Birth control appointment at BCIT', 'before', 'Health', {subitems:[sub('Sort prescription / dosage before India')]}),
+      mk('ADHD appt Jul 29 (reschedule? you\u2019ll be in India)', 'before', 'Health'),
+      // BEFORE - School + Career
+      mk('Final internship presentation (Jul 23)', 'before', 'School + Career'),
+      mk('Work on ads for internship', 'before', 'School + Career'),
+      mk('Finish Questa project', 'before', 'School + Career'),
+      // BEFORE - Misc
+      mk('Follow up on money transfer if not landed by Thu', 'before', 'Miscellaneous'),
+      mk('Hisaab: log expenses', 'before', 'Miscellaneous'),
+      mk('Get iCloud link made (with Morsal)', 'before', 'Miscellaneous', {maybe:true}),
+      mk('Consolidate old lists (Keep, notebook, Excel)', 'before', 'Miscellaneous', {maybe:true}),
+      mk('United baggage claim (follow up on email chain)', 'before', 'Miscellaneous'),
+
+      // WHILE THERE
+      mk('Get Driving License Extract from Haryana RTO (in person)', 'while', 'Documentation'),
+      mk('Dentist appointment', 'while', 'Health'),
+      mk('Eye appointment', 'while', 'Health'),
+      mk('Therapist appointment', 'while', 'Health'),
+      mk('Lasik eye surgery', 'while', 'Health'),
+      mk('Research egg freezing options / consult', 'while', 'Health'),
+      mk('Send Dad resume', 'while', 'School + Career'),
+      mk('LinkedIn networking', 'while', 'School + Career', {subitems:[sub('LinkedIn subscription')]}),
+
+      // AFTER TRIP
+      mk('Unpack and settle into new room', 'after', 'Move'),
+      mk('Buy laundry hamper + bathroom trash bin', 'after', 'Move'),
+      mk('Apply for BC driver\u2019s license (by Oct 31)', 'after', 'Documentation'),
+      mk('Apply for PGWP (after final grades post, Sept)', 'after', 'Documentation', {subitems:[sub('Book English test slot (CELPIP)')]}),
+      mk('Taxes', 'after', 'Documentation', {subitems:[sub('Update SIN')]}),
+      mk('Family doctor search (prescription continuity)', 'after', 'Health'),
+      mk('Figure out Adobe subscription alternative', 'after', 'School + Career'),
+      mk('Apply to jobs', 'after', 'School + Career', {subitems:[sub('Update job tracker')]}),
+      mk('Migrate OneDrive files from school', 'after', 'Miscellaneous'),
+      mk('Figure out transit (was under school fees)', 'after', 'Miscellaneous')
+    ],
+    social: [
+      // BEFORE
+      mk('Text Canadian friends (FIFA plans)', 'before', null, {subitems:['Morsal','Sal-Aidana','Soroush','Nikki'].map(sub)}),
+      mk('Pool day with current building friends', 'before', null),
+      mk('Board game night in building', 'before', null),
+      mk('Reply to birthday messages', 'before', null, {subitems:[sub('Tapo')]}),
+      mk('Call best friend back', 'before', null),
+      mk('Hike (whenever it fits)', 'before', null),
+      // WHILE THERE
+      mk('Contact wedding people', 'while', null, {subitems:['Varun','Pritika','Bashy','Shailja','Seerat','Disha','Akansha','Arsu','Harsh','Shivam'].map(sub)}),
+      mk('Contact boys group', 'while', null, {subitems:['Apoorve','Mihir','Timmy'].map(sub)}),
+      mk('Other India friends', 'while', null, {subitems:['Rishabh','Nohar','Suhasini','Akshay R.','Sanya'].map(sub)}),
+      mk('Family check-ins', 'while', null, {subitems:['Masi','Anusha','Guddu didi'].map(sub)}),
+      // AFTER
+      mk('Reconnect with Canadian friends', 'after', null, {subitems:['Hargun','Nikita','Tia','Ajwani'].map(sub)}),
+      mk('Eventually reach out', 'after', null, {subitems:['Tapo? (also in bday)','Akriti (US)','Sunaina','Samiksha','Khyati (baby)'].map(sub)})
+    ]
+  };
+}
+
+async function load(){
+  try {
+    const r = await store.get(KEY);
+    data = r && r.value ? JSON.parse(r.value) : seed();
+  } catch(e){ data = seed(); }
+
+  if (data.lastReset !== todayStr()){
+    data.recurring.forEach(x => x.done = false);
+    allTasks().forEach(item => {
+      if (item.starState === 'tomorrow'){ item.starState = 'today'; item.starredDate = todayStr(); }
+    });
+    data.lastReset = todayStr();
+    save();
+  }
+
+  renderAll();
+}
+
+function save(){
+  clearTimeout(saveT);
+  saveT = setTimeout(async () => {
+    try { await store.set(KEY, JSON.stringify(data)); } catch(e){}
+  }, 150);
+}
+
+function allTasks(){ return data.overall.concat(data.social); }
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function sortForDisplay(arr){ return arr.slice().sort((a,b) => (a.done?1:0)-(b.done?1:0)); }
+
+function setStar(item, state){ item.starState = state; item.starredDate = state==='today' ? todayStr() : null; save(); renderAll(); }
+function toggleStarToday(item){ setStar(item, item.starState==='today' ? 'none' : 'today'); }
+function sendTomorrow(item){ setStar(item, 'tomorrow'); }
+function toggleDone(item){
+  item.done = !item.done;
+  if (item.done){ item.doneDate = todayStr(); item.maybe = false; }
+  else { item.doneDate = null; }
+  save(); renderAll();
+}
+function toggleMaybe(item){ item.maybe = !item.maybe; save(); renderAll(); }
+function toggleSub(s){ s.done = !s.done; save(); renderAll(); }
+function delTask(list, item){ const i=list.indexOf(item); if(i>-1) list.splice(i,1); save(); renderAll(); }
+
+/* nesting */
+function findOwnerList(id){
+  if (data.overall.some(t => t.id===id)) return data.overall;
+  if (data.social.some(t => t.id===id)) return data.social;
+  return null;
+}
+function findParentOf(id){ return allTasks().find(t => t.subitems.some(s => s.id===id)) || null; }
+function nestTask(item){
+  const list = findOwnerList(item.id);
+  if (!list) return;
+  const sib = list.filter(t => t.phase===item.phase && t.category===item.category);
+  const pos = sib.indexOf(item);
+  if (pos <= 0) return;
+  const parent = sib[pos-1];
+  const idx = list.indexOf(item);
+  list.splice(idx, 1);
+  parent.subitems.push({ id:item.id, text:item.text, done:item.done });
+  save(); renderAll();
+}
+function unnestSub(subItem){
+  const parent = findParentOf(subItem.id);
+  if (!parent) return;
+  const list = findOwnerList(parent.id);
+  if (!list) return;
+  const si = parent.subitems.findIndex(s => s.id===subItem.id);
+  if (si>-1) parent.subitems.splice(si, 1);
+  const promoted = mk(subItem.text, parent.phase, parent.category, { done:subItem.done, doneDate: subItem.done?todayStr():null });
+  promoted.id = subItem.id;
+  const pIdx = list.indexOf(parent);
+  list.splice(pIdx+1, 0, promoted);
+  save(); renderAll();
+}
+
+/* move parent up/down among its siblings (same phase+category) */
+function moveTask(item, dir){
+  const list = findOwnerList(item.id);
+  if (!list) return;
+  const sib = list.filter(t => t.phase===item.phase && t.category===item.category && !t.done);
+  const pos = sib.indexOf(item);
+  const swapWith = sib[pos+dir];
+  if (!swapWith) return;
+  const iA = list.indexOf(item), iB = list.indexOf(swapWith);
+  list[iA] = swapWith; list[iB] = item;
+  save(); renderAll();
+}
+
+function startEdit(txtEl, item, opts){
+  opts = opts || {};
+  const input = el('input','edit-input');
+  input.value = item.text;
+  txtEl.replaceWith(input);
+
+  let nestBtn = null;
+  if (opts.isSub){
+    nestBtn = el('div','nest-btn','\u2934 un-nest');
+    nestBtn.addEventListener('pointerdown', e => { e.preventDefault(); item.text = input.value.trim() || item.text; unnestSub(item); });
+  } else {
+    const list = findOwnerList(item.id);
+    const sib = list ? list.filter(t => t.phase===item.phase && t.category===item.category) : [];
+    if (sib.indexOf(item) > 0){
+      nestBtn = el('div','nest-btn','\u2937 make sub-task');
+      nestBtn.addEventListener('pointerdown', e => { e.preventDefault(); item.text = input.value.trim() || item.text; nestTask(item); });
+    }
+  }
+  if (nestBtn) input.after(nestBtn);
+
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
+  const commit = () => { item.text = input.value.trim() || item.text; save(); renderAll(); };
+  input.addEventListener('blur', () => setTimeout(commit, 120));
+  input.addEventListener('keydown', e => { if(e.key==='Enter') input.blur(); });
+}
+
+function makeRow(item, opts){
+  const row = el('div','row'+(opts.isSub?' sub':'')+(opts.pending?' pending':''));
+  row.dataset.id = item.id;
+
+  if (opts.reorder){
+    const arrows = el('div','arrows');
+    const up = el('div','arrow-btn','\u2303'); up.addEventListener('click', ()=>moveTask(item,-1));
+    const dn = el('div','arrow-btn','\u2304'); dn.addEventListener('click', ()=>moveTask(item,1));
+    arrows.appendChild(up); arrows.appendChild(dn);
+    row.appendChild(arrows);
+  }
+  if (opts.subDraggable){
+    const handle = el('div','handle','\u22EE\u22EE');
+    handle.addEventListener('pointerdown', e => beginSubDrag(e, item, opts.parent));
+    row.appendChild(handle);
+  }
+
+  const box = el('div','box'+(opts.isSub?' sm':'')+(item.done?' done':'')+(!item.done && item.maybe ? ' maybe':''), CHECK);
+  let pressTimer=null, longFired=false;
+  box.addEventListener('pointerdown', () => { longFired=false; pressTimer=setTimeout(()=>{ longFired=true; toggleMaybe(item); }, 550); });
+  box.addEventListener('pointerup', () => { clearTimeout(pressTimer); if(!longFired) toggleDone(item); });
+  box.addEventListener('pointerleave', () => clearTimeout(pressTimer));
+  row.appendChild(box);
+
+  const txt = el('div','txt'+(item.done?' done':'')+(!item.done && item.maybe?' maybe':''), escapeHtml(item.text));
+  txt.addEventListener('click', () => startEdit(txt, item, { isSub: !!opts.isSub }));
+  row.appendChild(txt);
+
+  if (item.done && item.doneDate) row.appendChild(el('div','done-date', shortDate(item.doneDate)));
+
+  if (opts.showStar){
+    const star = el('div','star'+(item.starState==='today'?' on':''), item.starState==='today'?'\u2605':'\u2606');
+    star.addEventListener('click', () => toggleStarToday(item));
+    row.appendChild(star);
+  }
+  if (opts.showTomorrow){
+    const tb = el('div','tmrw-btn','\u2192');
+    tb.title = 'Move to tomorrow';
+    tb.addEventListener('click', () => sendTomorrow(item));
+    row.appendChild(tb);
+  }
+  if (opts.onDelete){
+    const del = el('div','del','\u00d7');
+    del.addEventListener('click', opts.onDelete);
+    row.appendChild(del);
+  }
+  return row;
+}
+
+function makeAddRow(placeholder, onAdd){
+  const wrap = el('div','add-line');
+  const toggle = el('div','add-toggle','+ Add');
+  const inline = el('div','add-inline');
+  const input = el('input'); input.placeholder = placeholder;
+  const btn = el('button', null, '\u2192');
+  inline.appendChild(input); inline.appendChild(btn);
+  wrap.appendChild(toggle); wrap.appendChild(inline);
+  toggle.addEventListener('click', () => { inline.classList.add('show'); toggle.style.display='none'; input.focus(); });
+  const go = () => { const v=input.value.trim(); if(v){ onAdd(v); input.value=''; inline.classList.remove('show'); toggle.style.display='block'; } };
+  btn.addEventListener('click', go);
+  input.addEventListener('keydown', e => { if(e.key==='Enter') go(); });
+  return wrap;
+}
+
+/* ---------- TODAY ---------- */
+function renderToday(){
+  const v = document.getElementById('view-today');
+  v.innerHTML = '';
+  const d = new Date();
+  v.appendChild(el('div','date-line', d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'})));
+
+  // progress across today's active picks + recurring
+  const todays = allTasks().filter(t => t.starState==='today');
+  const recDone = data.recurring.filter(r=>r.done).length;
+  const totalToday = todays.length + data.recurring.length;
+  const doneToday = todays.filter(t=>t.done).length + recDone;
+  const pct = totalToday===0 ? 0 : Math.round((doneToday/totalToday)*100);
+  const pw = el('div','progress-wrap');
+  pw.innerHTML = '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="progress-label">'+(totalToday===0?'Nothing on today yet':doneToday+' of '+totalToday+' done')+'</div>';
+  v.appendChild(pw);
+
+  const activePicks = todays.filter(t=>!t.done);
+  v.appendChild(el('div','busy-tag'+(activePicks.length>6?' show':''), 'Busy day! Let\u2019s focus your top tasks.'));
+
+  // Recurring
+  v.appendChild(el('div','section-label first','Recurring'));
+  const rc = el('div','card');
+  sortForDisplay(data.recurring).forEach(item => rc.appendChild(makeRow(item, { showStar:false })));
+  v.appendChild(rc);
+
+  // Today's Picks
+  v.appendChild(el('div','section-label','Today\u2019s Picks'));
+  const pc = el('div','card');
+  if (todays.length===0){
+    pc.appendChild(el('div','empty','Nothing picked yet. Star a task in Overall or Social.'));
+  } else {
+    const fresh = todays.filter(t => t.starredDate===todayStr());
+    const pending = todays.filter(t => t.starredDate!==todayStr());
+    fresh.concat(pending).forEach(item => {
+      pc.appendChild(makeRow(item, { showStar:true, showTomorrow:true, pending: pending.includes(item) }));
+      item.subitems.forEach(s => pc.appendChild(makeRow(s, {isSub:true})));
+    });
+  }
+  v.appendChild(pc);
+
+  // Tomorrow
+  const tmrw = allTasks().filter(t => t.starState==='tomorrow');
+  v.appendChild(el('div','section-label','Tomorrow'));
+  const tc = el('div','card');
+  if (tmrw.length===0){
+    tc.appendChild(el('div','empty','Nothing queued for tomorrow yet. Tap \u2192 on a pick to send it here.'));
+  } else {
+    tmrw.forEach(item => tc.appendChild(makeRow(item, { showStar:true })));
+  }
+  v.appendChild(tc);
+
+  // export / import links, quiet, bottom of Today only
+  const links = el('div','data-links');
+  const exp = el('span','link','Export data'); exp.addEventListener('click', ()=>openModal('export'));
+  const imp = el('span','link','Import data'); imp.addEventListener('click', ()=>openModal('import'));
+  links.appendChild(exp);
+  links.appendChild(el('span','sep','|'));
+  links.appendChild(imp);
+  v.appendChild(links);
+}
+
+/* ---------- OVERALL ---------- */
+function renderOverall(){
+  const v = document.getElementById('view-overall');
+  v.innerHTML = '';
+  v.appendChild(el('div','date-line','All Tasks'));
+
+  PHASES.forEach(([pk,label,cls]) => {
+    const inPhase = data.overall.filter(t => t.phase===pk);
+    if (inPhase.length===0) return;
+    v.appendChild(el('span','phase-tag '+cls, label));
+    CAT_ORDER.forEach(cat => {
+      const items = inPhase.filter(t => t.category===cat);
+      if (items.length===0) return;
+      const card = el('div','card');
+      card.dataset.phase = pk; card.dataset.category = cat;
+      const doneN = items.filter(t=>t.done).length;
+      card.appendChild(el('div','cat-head '+(cls||'before'), '<span>'+cat+'</span><span class="cat-count">'+doneN+' / '+items.length+'</span>'));
+      sortForDisplay(items).forEach(item => {
+        card.appendChild(makeRow(item, { showStar:true, reorder: !item.done, onDelete:()=>delTask(data.overall, item) }));
+        item.subitems.forEach(s => card.appendChild(makeRow(s, {isSub:true, subDraggable:true, parent:item})));
+      });
+      card.appendChild(makeAddRow('Add to '+cat+'...', (val)=>{ data.overall.push(mk(val, pk, cat)); save(); renderAll(); }));
+      v.appendChild(card);
+    });
+  });
+}
+
+/* ---------- SOCIAL ---------- */
+function renderSocial(){
+  const v = document.getElementById('view-social');
+  v.innerHTML = '';
+  v.appendChild(el('div','date-line','Social'));
+  v.appendChild(el('div','date-sub','People & Plans! Low priority, no pressure.'));
+
+  PHASES.forEach(([pk,label,cls]) => {
+    const items = data.social.filter(t => t.phase===pk);
+    if (items.length===0) return;
+    v.appendChild(el('span','phase-tag '+cls, label));
+    const card = el('div','card');
+    card.dataset.phase = pk;
+    sortForDisplay(items).forEach(item => {
+      card.appendChild(makeRow(item, { showStar:true, reorder: !item.done, onDelete:()=>delTask(data.social, item) }));
+      item.subitems.forEach(s => card.appendChild(makeRow(s, {isSub:true, subDraggable:true, parent:item})));
+    });
+    card.appendChild(makeAddRow('Add to '+label+'...', (val)=>{ data.social.push(mk(val, pk, null)); save(); renderAll(); }));
+    v.appendChild(card);
+  });
+}
+
+function renderAll(){
+  const st = document.getElementById('screen').scrollTop;
+  renderToday(); renderOverall(); renderSocial();
+  document.getElementById('screen').scrollTop = st;
+}
+
+/* Tabs */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('show'));
+    tab.classList.add('active');
+    document.getElementById('view-'+tab.dataset.tab).classList.add('show');
+    document.getElementById('screen').scrollTop = 0;
+  });
+});
+
+/* ---------- Sub-item drag reorder (within a parent) ---------- */
+let subDrag = null;
+function beginSubDrag(e, subItem, parent){
+  e.preventDefault();
+  const row = e.target.closest('.row');
+  row.classList.add('dragging');
+  const ghost = el('div','ghost', escapeHtml(subItem.text));
+  document.body.appendChild(ghost);
+  ghost.style.left=(e.clientX+12)+'px'; ghost.style.top=(e.clientY+12)+'px';
+  subDrag = { subItem, parent, row, ghost };
+  document.addEventListener('pointermove', onSubMove);
+  document.addEventListener('pointerup', onSubEnd, {once:true});
+}
+function onSubMove(e){
+  if(!subDrag) return;
+  subDrag.ghost.style.left=(e.clientX+12)+'px'; subDrag.ghost.style.top=(e.clientY+12)+'px';
+}
+function onSubEnd(e){
+  document.removeEventListener('pointermove', onSubMove);
+  if(!subDrag) return;
+  const { subItem, parent, row, ghost } = subDrag;
+  ghost.remove(); row.classList.remove('dragging');
+  const el2 = document.elementFromPoint(e.clientX, e.clientY);
+  const targetRow = el2 ? el2.closest('.row[data-id]') : null;
+  if (targetRow && targetRow.dataset.id !== subItem.id){
+    const tIdx = parent.subitems.findIndex(s => s.id===targetRow.dataset.id);
+    if (tIdx > -1){
+      const rect = targetRow.getBoundingClientRect();
+      const before = e.clientY < rect.top + rect.height/2;
+      const cur = parent.subitems.indexOf(subItem);
+      if (cur>-1) parent.subitems.splice(cur,1);
+      let idx = parent.subitems.findIndex(s => s.id===targetRow.dataset.id);
+      if (idx<0) idx = parent.subitems.length;
+      parent.subitems.splice(before?idx:idx+1, 0, subItem);
+      save();
+    }
+  }
+  subDrag = null;
+  renderAll();
+}
+
+/* ---------- Export / Import ---------- */
+const modalBg = document.getElementById('modalBg');
+function openModal(mode){
+  const title = document.getElementById('modalTitle');
+  const desc = document.getElementById('modalDesc');
+  const ta = document.getElementById('modalText');
+  const actions = document.getElementById('modalActions');
+  actions.innerHTML = '';
+
+  if (mode==='export'){
+    title.textContent = 'Export data';
+    desc.textContent = 'This is your whole list as text. Copy all of it and paste it to Claude when you want a big set of changes made.';
+    ta.value = JSON.stringify(data);
+    ta.readOnly = true;
+    const copy = el('button','btn-primary','Copy'); 
+    copy.addEventListener('click', () => { ta.select(); document.execCommand('copy'); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200); });
+    const close = el('button','btn-ghost','Close'); close.addEventListener('click', closeModal);
+    actions.appendChild(copy); actions.appendChild(close);
+  } else {
+    title.textContent = 'Import data';
+    desc.textContent = 'Paste the updated text from Claude here. This replaces your current list completely, so only import text that already has everything in it.';
+    ta.value = '';
+    ta.readOnly = false;
+    const load2 = el('button','btn-primary','Replace my list');
+    load2.addEventListener('click', () => {
+      let parsed;
+      try { parsed = JSON.parse(ta.value.trim()); }
+      catch(e){ alert('That doesn\u2019t look like valid list text. Check you copied all of it.'); return; }
+      if (!parsed || !parsed.overall){ alert('That text is missing the list data.'); return; }
+      if (confirm('This will replace your current list completely. Continue?')){
+        data = parsed; save(); closeModal(); renderAll();
+      }
+    });
+    const close = el('button','btn-ghost','Cancel'); close.addEventListener('click', closeModal);
+    actions.appendChild(load2); actions.appendChild(close);
+  }
+  modalBg.classList.add('show');
+}
+function closeModal(){ modalBg.classList.remove('show'); }
+modalBg.addEventListener('click', e => { if(e.target===modalBg) closeModal(); });
+
+load();
+</script>
+</body>
+</html>
