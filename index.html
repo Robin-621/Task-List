@@ -364,7 +364,8 @@ function makeAddRow(placeholder, onAdd){
 function renderToday(){
   const v = document.getElementById('view-today'); v.innerHTML = '';
   const d = new Date();
-  v.appendChild(el('div','date-line', d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'})));
+  const dl = d.getDate() + ' ' + d.toLocaleDateString('en-US',{month:'long'}) + ', ' + d.toLocaleDateString('en-US',{weekday:'short'});
+  v.appendChild(el('div','date-line', dl));
 
   const todays = allTasks().filter(t => t.starState==='today');
   const recDone = data.recurring.filter(r=>r.done).length;
@@ -385,10 +386,10 @@ function renderToday(){
     if (!data.todayOrder) data.todayOrder = [];
     const ordered = orderedPicks(todays);
     ordered.forEach((item, i) => {
-      pc.appendChild(makeRow(item, { showStar:true, showTomorrow:true, showMenu:true,
+      pc.appendChild(makeRow(item, { showStar:true, showTomorrow:true,
         pending: item.starredDate!==todayStr(),
         pickReorder: { count: ordered.length, index: i } }));
-      item.subitems.forEach(s => pc.appendChild(makeRow(s, {isSub:true, showMenu:true, parent:item})));
+      item.subitems.forEach(s => pc.appendChild(makeRow(s, {isSub:true, parent:item})));
     });
   }
   v.appendChild(pc);
@@ -400,7 +401,19 @@ function renderToday(){
   v.appendChild(el('div','section-label', tmrwLabel));
   const tc = el('div','card');
   if (tmrw.length===0){ tc.appendChild(el('div','empty','Nothing queued for tomorrow yet. Tap \u2192 on a pick to send it here.')); }
-  else { tmrw.forEach(item => tc.appendChild(makeRow(item, { showStar:true, showMenu:true }))); }
+  else {
+    tmrw.forEach(item => {
+      tc.appendChild(makeRow(item, { showStar:true }));
+      item.subitems.forEach(s => {
+        const sr = el('div','row sub');
+        sr.appendChild(el('div','box sm'+(s.done?' done':''), CHECK));
+        sr.appendChild(el('div','txt'+(s.done?' done':''), escapeHtml(s.text)));
+        sr.querySelector('.box').style.pointerEvents = 'none';
+        sr.querySelector('.txt').style.cursor = 'default';
+        tc.appendChild(sr);
+      });
+    });
+  }
   v.appendChild(tc);
 
   v.appendChild(el('div','section-label','Recurring'));
