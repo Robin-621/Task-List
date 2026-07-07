@@ -20,168 +20,98 @@
     --line: #ECE6EA;
     --done: #B6ADB3;
     --maybe-border: #C9A9C2;
-
     --before: #8A2481;
-    --before-soft: #F4E4F0;
     --while: #B85BA6;
-    --while-soft: #F7EAF4;
     --after: #E0A8D4;
-    --after-soft: #FBF2F9;
     --after-ink: #7A3A6E;
-
     --head-before: #8A244E;
     --head-while: #B5567A;
     --head-after: #E4AFC0;
     --head-after-ink: #7A2E44;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
   html, body { height: 100%; }
   body {
     font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    -webkit-font-smoothing: antialiased;
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-    overflow: hidden;
-    transition: background 0.2s ease, color 0.2s ease;
+    background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
   }
-
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px 18px 8px;
-    flex-shrink: 0;
-  }
+  .topbar { display: flex; align-items: center; justify-content: center; padding: 14px 18px 8px; flex-shrink: 0; }
   .app-name { font-family: 'Merienda', cursive; font-size: 17px; font-weight: 700; color: var(--burgundy); }
-  .top-actions { display: flex; gap: 8px; }
-  .icon-btn {
-    width: 37px; height: 37px;
-    border-radius: 11px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--ink-soft);
-    font-size: 15px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
-
   .screen { flex: 1; overflow-y: auto; padding: 4px 16px 24px; -webkit-overflow-scrolling: touch; }
   .screen::-webkit-scrollbar { display: none; }
-
   .date-line { font-family: 'Merienda', cursive; font-size: 23px; font-weight: 700; margin: 2px 0 3px; }
   .date-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
-
-  /* progress bar */
   .progress-wrap { margin: 4px 0 16px; }
   .progress-track { height: 7px; background: var(--burgundy-soft); border-radius: 100px; overflow: hidden; }
   .progress-fill { height: 100%; background: var(--burgundy); border-radius: 100px; width: 0%; transition: width 0.35s ease; }
   .progress-label { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
-
-  .busy-tag {
-    background: var(--burgundy-soft); color: var(--burgundy);
-    font-size: 13px; font-weight: 600;
-    padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; display: none;
-  }
+  .busy-tag { background: var(--burgundy-soft); color: var(--burgundy); font-size: 13px; font-weight: 600; padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; display: none; }
   .busy-tag.show { display: block; }
-
-  .section-label {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
-    color: var(--burgundy); margin: 18px 2px 7px;
-  }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--burgundy); margin: 18px 2px 7px; }
   .section-label.first { margin-top: 2px; }
-
-  .phase-tag {
-    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    color: var(--accent-contrast); background: var(--before);
-    padding: 4px 11px; border-radius: 100px; margin: 18px 0 8px;
-  }
+  .phase-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent-contrast); background: var(--before); padding: 5px 12px; border-radius: 100px; margin: 18px 0 8px; cursor: pointer; }
   .phase-tag.while { background: var(--while); }
   .phase-tag.after { background: var(--after); color: var(--after-ink); }
-
+  .phase-tag .caret { font-size: 9px; transition: transform 0.2s; }
+  .phase-tag.collapsed .caret { transform: rotate(-90deg); }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: 15px; overflow: hidden; margin-bottom: 10px; }
-  .cat-head {
-    padding: 10px 14px; font-family: 'Merienda', cursive; font-weight: 700; font-size: 13px;
-    display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line);
-    color: var(--accent-contrast);
-  }
+  .cat-head { padding: 10px 14px; font-family: 'Merienda', cursive; font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); color: var(--accent-contrast); }
   .cat-head.before { background: var(--head-before); }
   .cat-head.while { background: var(--head-while); }
   .cat-head.after { background: var(--head-after); color: var(--head-after-ink); }
   .cat-count { font-size: 11px; font-weight: 500; opacity: 0.85; }
-
-  .row {
-    display: flex; align-items: flex-start; gap: 9px;
-    padding: 12px 12px; border-bottom: 1px solid var(--line); position: relative;
-  }
+  .row { display: flex; align-items: flex-start; gap: 8px; padding: 12px 12px; border-bottom: 1px solid var(--line); position: relative; }
   .row:last-of-type { border-bottom: none; }
-  .row.sub { padding-left: 40px; padding-top: 9px; padding-bottom: 9px; }
+  .row.sub { padding-left: 38px; padding-top: 9px; padding-bottom: 9px; }
   .row.pending { border-left: 3px solid var(--burgundy); padding-left: 9px; }
-  .row.dragging { opacity: 0.3; }
-  .row.drop-target { background: var(--surface-2); }
-
-  .handle { color: var(--ink-soft); opacity: 0.4; font-size: 15px; padding: 2px 0 6px 0; cursor: grab; touch-action: none; flex-shrink: 0; }
-
-  .box {
-    width: 22px; height: 22px; border-radius: 7px; border: 2px solid #C4B9C1; flex-shrink: 0;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 1px;
-  }
-  .box.sm { width: 19px; height: 19px; border-radius: 6px; }
+  .arrows { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; padding-top: 3px; }
+  .arrow-btn { font-size: 9px; color: var(--ink-soft); cursor: pointer; line-height: 0.9; padding: 1px 3px; opacity: 0.5; font-weight: 300; }
+  .arrow-btn:active { opacity: 1; color: var(--burgundy); }
+  .box { width: 19px; height: 19px; border-radius: 6px; border: 2px solid #C4B9C1; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .box.sm { width: 17px; height: 17px; border-radius: 5px; }
   .box.done { background: var(--burgundy); border-color: var(--burgundy); }
-  .box.maybe { border-style: dashed; border-color: var(--maybe-border); transform: scale(0.72); }
-  .box svg { width: 12px; height: 12px; opacity: 0; }
+  .box.maybe { border-style: dashed; border-color: var(--maybe-border); transform: scale(0.78); }
+  .box svg { width: 11px; height: 11px; opacity: 0; }
   .box.done svg { opacity: 1; }
-
-  .txt { flex: 1; font-size: 14.5px; line-height: 1.35; cursor: text; word-break: break-word; padding-top: 1px; }
-  .row.sub .txt { font-size: 13.5px; color: var(--ink); opacity: 0.82; }
+  .txt { flex: 1; font-size: 15px; line-height: 1.35; cursor: text; word-break: break-word; padding-top: 1px; }
+  .row.sub .txt { font-size: 14px; color: var(--ink); opacity: 0.82; }
   .txt.done { color: var(--done); text-decoration: line-through; }
   .txt.maybe { color: var(--maybe-border); font-style: italic; }
   .done-date { font-size: 11px; color: var(--ink-soft); margin-left: 6px; white-space: nowrap; }
-
-  .edit-input { flex: 1; font-size: 14.5px; border: none; border-bottom: 1.5px solid var(--burgundy); background: transparent; color: var(--ink); padding: 1px 0; }
+  .edit-input { flex: 1; font-size: 15px; border: none; border-bottom: 1.5px solid var(--burgundy); background: transparent; color: var(--ink); padding: 1px 0; }
   .edit-input:focus { outline: none; }
-  .nest-btn {
-    flex-shrink: 0; font-size: 12px; font-weight: 600; color: var(--burgundy); background: var(--burgundy-soft);
-    border-radius: 8px; padding: 5px 9px; cursor: pointer; white-space: nowrap; align-self: center;
-  }
-
-  .arrows { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; padding-top: 2px; }
-  .arrow-btn { font-size: 9px; color: var(--ink-soft); cursor: pointer; line-height: 0.9; padding: 1px 3px; opacity: 0.5; font-weight: 300; }
-  .arrow-btn:active { opacity: 1; color: var(--burgundy); }
-
-  .star { flex-shrink: 0; font-size: 18px; color: #D4C8D0; cursor: pointer; line-height: 1; padding: 2px 3px 6px 3px; }
+  .star { flex-shrink: 0; font-size: 16px; color: #D4C8D0; cursor: pointer; line-height: 1; padding: 2px 3px 6px 3px; margin-top: 1px; }
   .star.on { color: var(--burgundy); }
-  .tmrw-btn { flex-shrink: 0; font-size: 16px; color: var(--ink-soft); cursor: pointer; line-height: 1; padding: 2px 3px 6px 3px; opacity: 0.7; }
+  .tmrw-btn { flex-shrink: 0; font-size: 15px; color: var(--ink-soft); cursor: pointer; line-height: 1; padding: 2px 3px 6px 3px; opacity: 0.7; margin-top: 1px; }
   .tmrw-btn:active { opacity: 1; color: var(--burgundy); }
-
-  .del { flex-shrink: 0; font-size: 16px; color: #D8CDD4; cursor: pointer; padding: 0 2px 6px 4px; line-height: 1; }
-
+  #view-today .star { font-size: 13px; padding: 3px 4px 6px 4px; }
+  #view-today .tmrw-btn { font-size: 12px; padding: 3px 4px 6px 4px; }
+  .dots { flex-shrink: 0; font-size: 18px; color: var(--ink-soft); cursor: pointer; line-height: 1; padding: 0 2px 6px 4px; letter-spacing: 1px; font-weight: 600; }
+  .dots:active { color: var(--burgundy); }
+  .menu { position: absolute; right: 8px; top: 40px; z-index: 50; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; box-shadow: 0 6px 20px rgba(0,0,0,0.14); overflow: hidden; min-width: 150px; }
+  .menu-item { padding: 11px 14px; font-size: 14px; color: var(--ink); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 9px; cursor: pointer; }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item.danger { color: #A32D2D; }
+  .menu-item .mi-ico { width: 16px; text-align: center; opacity: 0.65; font-size: 13px; }
+  .menu-reorder { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 9px 14px; border-bottom: 1px solid var(--line); }
+  .menu-reorder span { font-size: 16px; color: var(--burgundy); cursor: pointer; padding: 2px 8px; }
   .add-line { padding: 9px 12px; }
   .add-toggle { font-size: 12.5px; color: var(--burgundy); font-weight: 600; cursor: pointer; }
   .add-inline { display: none; gap: 8px; margin-top: 6px; }
   .add-inline.show { display: flex; }
-  .add-inline input { flex: 1; border: none; background: var(--surface-2); border-radius: 9px; padding: 9px 10px; font-size: 13.5px; color: var(--ink); }
+  .add-inline input { flex: 1; border: none; background: var(--surface-2); border-radius: 9px; padding: 9px 10px; font-size: 14px; color: var(--ink); }
   .add-inline button { background: var(--burgundy); color: var(--accent-contrast); border: none; border-radius: 9px; width: 34px; font-size: 17px; cursor: pointer; }
-
   .empty { font-size: 12.5px; color: var(--ink-soft); font-style: italic; padding: 12px 14px; }
-
+  .data-links { text-align: center; margin: 22px 0 8px; font-size: 12.5px; color: var(--ink-soft); }
+  .data-links span.link { color: var(--burgundy); font-weight: 600; cursor: pointer; }
+  .data-links span.sep { margin: 0 8px; opacity: 0.5; }
   .tabbar { display: flex; background: var(--surface); border-top: 1px solid var(--line); flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom); }
   .tab { flex: 1; text-align: center; padding: 9px 4px 10px; font-size: 11px; color: var(--ink-soft); cursor: pointer; min-height: 52px; }
   .tab .ic { font-size: 19px; display: block; margin-bottom: 2px; line-height: 1; }
   .tab.active { color: var(--burgundy); font-weight: 600; }
-
   .view { display: none; }
   .view.show { display: block; }
-
-  .ghost { position: fixed; z-index: 999; pointer-events: none; background: var(--surface); border: 1.5px solid var(--burgundy); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; box-shadow: 0 6px 18px rgba(0,0,0,0.18); opacity: 0.95; }
-
-  /* modal for export/import */
-  .data-links { text-align: center; margin: 22px 0 8px; font-size: 12.5px; color: var(--ink-soft); }
-  .data-links span.link { color: var(--burgundy); font-weight: 600; cursor: pointer; }
-  .data-links span.sep { margin: 0 8px; opacity: 0.5; }
   .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
   .modal-bg.show { display: flex; }
   .modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 420px; padding: 18px; max-height: 80vh; display: flex; flex-direction: column; }
@@ -195,23 +125,17 @@
 </style>
 </head>
 <body>
-
-<div class="topbar">
-  <div class="app-name">Robin's Task List</div>
-</div>
-
+<div class="topbar"><div class="app-name">Robin's Task List</div></div>
 <div class="screen" id="screen">
   <div class="view show" id="view-today"></div>
   <div class="view" id="view-overall"></div>
   <div class="view" id="view-social"></div>
 </div>
-
 <div class="tabbar">
   <div class="tab active" data-tab="today"><span class="ic">◎</span>Today</div>
   <div class="tab" data-tab="overall"><span class="ic">▤</span>Overall</div>
   <div class="tab" data-tab="social"><span class="ic">♡</span>Social</div>
 </div>
-
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3 id="modalTitle">Export data</h3>
@@ -220,165 +144,59 @@
     <div class="modal-actions" id="modalActions"></div>
   </div>
 </div>
-
 <script>
-/* Storage: use the browser's own localStorage (Safari, Chrome, etc) so this
-   app remembers your data anywhere it runs, not only inside Claude.
-   Falls back to Claude's window.storage if localStorage isn't available. */
+const SEED = {"lastReset": "2026-07-07", "recurring": [{"id": "ezi374wm", "text": "Clean room & Light incense", "done": false}, {"id": "15oevc7r", "text": "Sort phone", "done": false}], "overall": [{"id": "zunrqrvo", "text": "Go check out bed", "done": false, "doneDate": null, "starState": "today", "starredDate": "2026-07-07", "maybe": false, "phase": "before", "category": "Move", "subitems": [{"id": "seller01", "text": "Decide which seller", "done": false}, {"id": "7t02v1pw", "text": "Figure out pickup for move day", "done": false}]}, {"id": "jn1m7l4y", "text": "Text Ritwik (moving tips)", "done": false, "doneDate": null, "starState": "today", "starredDate": "2026-07-07", "maybe": false, "phase": "before", "category": "Move", "subitems": []}, {"id": "yg97ta5v", "text": "Pick exact move-out day (18th or 19th)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Move", "subitems": [{"id": "o4ehz6fg", "text": "Book truck or movers", "done": false}]}, {"id": "65gsssz4", "text": "Arrange moving boxes (check with Sal)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Move", "subitems": []}, {"id": "xnog2ene", "text": "Reply to Arbour email", "done": false, "doneDate": null, "starState": "today", "starredDate": "2026-07-07", "maybe": false, "phase": "before", "category": "Move", "subitems": [{"id": "5muctask", "text": "Get building access card ($100)", "done": false}]}, {"id": "69h342tv", "text": "Take photos of room (before packing)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Move", "subitems": []}, {"id": "uqnfwlaf", "text": "Go to gym & sauna (before leave)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Move", "subitems": [{"id": "4pitqcvg", "text": "Tub bath (pool again)", "done": false}]}, {"id": "vkzdsyfp", "text": "Remove wall-mounted stuff carefully", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Move", "subitems": [{"id": "xrbgxm65", "text": "Figure out how to remove mirror stickers", "done": false}]}, {"id": "7xg240oe", "text": "Transfer WiFi to roommate’s name", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Move", "subitems": [{"id": "akpfd7cc", "text": "Figure payment (discuss Kris)", "done": false}, {"id": "snyz9c7e", "text": "Ask about Dishwasher", "done": false}]}, {"id": "e007jfu4", "text": "Pack kitchen + bathroom items", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Move", "subitems": [{"id": "w67iem2k", "text": "Pack India bag first", "done": false}, {"id": "ba5mzbqm", "text": "Divide remaining stuff (keep vs throw away)", "done": false}, {"id": "knb6s7pn", "text": "Fridge magnet + Air Fryer", "done": false}, {"id": "oykcgwpd", "text": "Bidet", "done": false}, {"id": "s568by1d", "text": "Face roller (get from Kris first)", "done": false}, {"id": "5i4v6uih", "text": "Bags & Jacket (outside closet)", "done": false}]}, {"id": "nuatt7pj", "text": "Book India tickets", "done": false, "doneDate": null, "starState": "today", "starredDate": "2026-07-07", "maybe": true, "phase": "before", "category": "Trip Home", "subitems": []}, {"id": "gk1ln5ln", "text": "Update Nupur changed plans + Congratulate", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Trip Home", "subitems": []}, {"id": "dqnoa4tt", "text": "Pick up souvenirs and gifts (Metrotown) - before leaving?", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Trip Home", "subitems": []}, {"id": "2kfguidg", "text": "Get study permit from family friend in Kits (needed to re-enter)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Trip Home", "subitems": []}, {"id": "448fbjy6", "text": "Contact aunt Masi about airpod (courier to boyfriend)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Trip Home", "subitems": []}, {"id": "uy4cogv6", "text": "Check job applications (LinkedIn)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Documentation", "subitems": []}, {"id": "w1fp6r00", "text": "MSP reapplication follow-up", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Health", "subitems": []}, {"id": "p26ce9qf", "text": "Birth control appointment at BCIT", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Health", "subitems": []}, {"id": "4y7zxmtu", "text": "ADHD appt Jul 29 (reschedule?)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Health", "subitems": [{"id": "gwttq1gf", "text": "Sort prescription / dosage before India", "done": false}]}, {"id": "lnys87fa", "text": "Finish Questa project", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "School + Career", "subitems": []}, {"id": "9b12pxyc", "text": "Work on ads for internship", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "School + Career", "subitems": []}, {"id": "sltf8osj", "text": "Final internship presentation - Jul 23", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "School + Career", "subitems": []}, {"id": "7fl6sfh0", "text": "United baggage claim (follow up on email chain)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Miscellaneous", "subitems": []}, {"id": "cxp8lr7r", "text": "Hisaab (log expenses)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Miscellaneous", "subitems": []}, {"id": "2pekykgc", "text": "Get iCloud link made (with Morsal)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": "Miscellaneous", "subitems": []}, {"id": "ajfrxoq9", "text": "Consolidate old lists (Keep, notebook, Excel)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": true, "phase": "before", "category": "Miscellaneous", "subitems": []}, {"id": "ew6va099", "text": "Get Driving License Extract from Haryana RTO (in person)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "Documentation", "subitems": []}, {"id": "333ftqry", "text": "Dentist appointment", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "Health", "subitems": []}, {"id": "3pycl6wj", "text": "Eye appointment", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "Health", "subitems": []}, {"id": "fjfh3faw", "text": "Therapist appointment", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "Health", "subitems": []}, {"id": "a5vzt7nh", "text": "Lasik eye surgery", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "Health", "subitems": []}, {"id": "b0z5wjo9", "text": "Research egg freezing options / consult", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "Health", "subitems": []}, {"id": "6hsqdqc9", "text": "Send Dad resume", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "School + Career", "subitems": []}, {"id": "2afccto7", "text": "LinkedIn networking", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "School + Career", "subitems": [{"id": "k2k856h4", "text": "LinkedIn subscription", "done": false}]}, {"id": "testtdst", "text": "Test Todoist", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": "Miscellaneous", "subitems": []}, {"id": "s94e5q4k", "text": "Pick up more furniture (see what’s needed)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "Move", "subitems": []}, {"id": "2vloy57r", "text": "Buy laundry hamper + bathroom trash bin", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "Move", "subitems": []}, {"id": "mc1s48jm", "text": "Apply for PGWP (after final grades post, Sept)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "Documentation", "subitems": [{"id": "qyhp5vqk", "text": "Book English test slot (CELPIP)", "done": false}]}, {"id": "x5tf0ix8", "text": "Taxes", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "Documentation", "subitems": [{"id": "bjaah2e0", "text": "Update SIN", "done": false}]}, {"id": "a6zn90hj", "text": "Apply for BC driver’s license (by Oct 31)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "Documentation", "subitems": []}, {"id": "9wi9mz7x", "text": "Family doctor search (prescription continuity)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "Health", "subitems": []}, {"id": "i5qvdn9n", "text": "Apply to jobs", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "School + Career", "subitems": [{"id": "cij89y5z", "text": "Update job tracker", "done": false}]}, {"id": "z55ivi5v", "text": "Figure out Adobe subscription", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "School + Career", "subitems": [{"id": "jfyojrq7", "text": "Migrate OneDrive files from school", "done": false}]}, {"id": "chad5410", "text": "Figure out transit plans", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": "Miscellaneous", "subitems": []}, {"id": "6dd1z70m", "text": "Do laundry (running low on clothes)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": true, "phase": "before", "category": "Move", "subitems": [{"id": "b85datos", "text": "Wash the blanket from move-in", "done": false, "maybe": true}, {"id": "52m5bohl", "text": "Deep clean room", "done": false, "maybe": true}]}], "social": [{"id": "ampcaoxd", "text": "Reply to birthday messages", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": null, "subitems": [{"id": "q8rg9quc", "text": "Tapo", "done": false}]}, {"id": "dxw9htj9", "text": "Call Ashna back", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": null, "subitems": []}, {"id": "lvdfnzd1", "text": "Board game night (before move)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": null, "subitems": [{"id": "lnmziykh", "text": "Pool day (before move) :Sal-Aidana", "done": false}]}, {"id": "d82bupe7", "text": "Text CAD peeps (FIFA plans)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": null, "subitems": [{"id": "1eti6j1h", "text": "Morsal", "done": false}, {"id": "nh225ohf", "text": "Soroush", "done": false}, {"id": "03xfzv75", "text": "Nikki", "done": false}]}, {"id": "6me2hixx", "text": "Contact wedding people", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": null, "subitems": [{"id": "2k17lxqz", "text": "Varun", "done": false}, {"id": "v7l2g7pa", "text": "Pritika", "done": false}, {"id": "u2tg76ze", "text": "Bashy", "done": false}, {"id": "vdcnyrt8", "text": "Shailja", "done": false}, {"id": "u29lmd5p", "text": "Seerat", "done": false}, {"id": "w7w5wkj4", "text": "Disha", "done": false}, {"id": "ncn6nm8e", "text": "Akansha", "done": false}, {"id": "5e1avuzg", "text": "Arsu", "done": false}, {"id": "v7m6417a", "text": "Harsh", "done": false}, {"id": "i4x62jd8", "text": "Shivam", "done": false}]}, {"id": "qxbei1qs", "text": "Other India friends", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": null, "subitems": [{"id": "b3s2h5h3", "text": "Rishabh", "done": false}, {"id": "k28rx10f", "text": "Nohar", "done": false}, {"id": "se6cjyen", "text": "Suhasini", "done": false}, {"id": "fxra5s81", "text": "Akshay R.", "done": false}, {"id": "2osr8vxp", "text": "Sanya", "done": false}]}, {"id": "zwr9b33w", "text": "Contact boys group", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": null, "subitems": []}, {"id": "hp2swrzx", "text": "Family check-ins", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "while", "category": null, "subitems": [{"id": "6eu2ur11", "text": "Masi", "done": false}, {"id": "k2rbr488", "text": "Anusha", "done": false}, {"id": "6c50fcpl", "text": "Guddu didi", "done": false}]}, {"id": "kagggs4t", "text": "Reconnect with Canadian friends", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": null, "subitems": [{"id": "xpxqcj34", "text": "Hargun", "done": false}, {"id": "tm601jvt", "text": "Nikita", "done": false}, {"id": "hfw0ody6", "text": "Tia", "done": false}, {"id": "na6dov7z", "text": "Ajwani", "done": false}]}, {"id": "e6j4uk3m", "text": "Eventually reach out", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "after", "category": null, "subitems": [{"id": "9wzsot7d", "text": "Akriti", "done": false}, {"id": "co3e0bhz", "text": "Sunaina", "done": false}, {"id": "elw41br2", "text": "Samiksha", "done": false}, {"id": "f8xirhql", "text": "Khyati (baby)", "done": false}]}, {"id": "scyzrgkd", "text": "Hike (whenever it fits)", "done": false, "doneDate": null, "starState": "none", "starredDate": null, "maybe": false, "phase": "before", "category": null, "subitems": []}]};
+/* Storage: browser localStorage so it works standalone in Safari, with a
+   fallback to Claude's window.storage inside the Claude viewer. */
 const store = (function(){
   let ls = null;
   try { const k='__t'; window.localStorage.setItem(k,'1'); window.localStorage.removeItem(k); ls = window.localStorage; } catch(e){ ls = null; }
-  if (ls){
-    return {
-      get: async (key) => { const v = ls.getItem(key); return v===null ? null : { key, value:v }; },
-      set: async (key, value) => { ls.setItem(key, value); return { key, value }; }
-    };
-  }
-  // fallback for environments without localStorage (e.g. Claude viewer)
+  if (ls) return {
+    get: async (key) => { const v = ls.getItem(key); return v===null ? null : { key, value:v }; },
+    set: async (key, value) => { ls.setItem(key, value); return { key, value }; }
+  };
   return {
     get: async (key) => { try { return await window.storage.get(key, false); } catch(e){ return null; } },
     set: async (key, value) => { try { return await window.storage.set(key, value, false); } catch(e){ return null; } }
   };
 })();
 
-const KEY = 'robins-tasklist-v2';
+const KEY = 'robins-tasklist-v4';
+const COLLAPSE_KEY = 'robins-tasklist-collapse';
 const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 const CAT_ORDER = ['Move','Trip Home','Documentation','Health','School + Career','Miscellaneous'];
 const PHASES = [['before','Before Trip',''],['while','While There','while'],['after','After Trip','after']];
 
 let data = null;
+let collapsed = {};
 let saveT = null;
+let openMenuId = null;
 
 function uid(){ return Math.random().toString(36).slice(2,10); }
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 function shortDate(iso){ const d = new Date(iso); return (d.getMonth()+1)+'/'+d.getDate(); }
+function mk(text, phase, category, extra){ return Object.assign({ id: uid(), text, done:false, doneDate:null, starState:'none', starredDate:null, maybe:false, phase, category, subitems:[] }, extra||{}); }
 
-function mk(text, phase, category, extra={}){
-  return Object.assign({
-    id: uid(), text, done:false, doneDate:null,
-    starState:'none', starredDate:null, maybe:false,
-    phase, category, subitems:[]
-  }, extra);
-}
-function sub(text){ return {id:uid(), text, done:false}; }
-
-function seed(){
-  return {
-    lastReset: todayStr(),
-    recurring: [
-      {id:uid(), text:'Clean room', done:false},
-      {id:uid(), text:'Light incense', done:false},
-      {id:uid(), text:'Sort phone', done:false}
-    ],
-    overall: [
-      // BEFORE - Move
-      mk('Pick exact move-out day (18th or 19th)', 'before', 'Move'),
-      mk('Book truck or movers', 'before', 'Move'),
-      mk('Arrange moving boxes (ask grocery produce section)', 'before', 'Move'),
-      mk('Pack India bag first', 'before', 'Move'),
-      mk('Pack kitchen + bathroom items', 'before', 'Move', {subitems:['Fridge magnet','Bidet','Jackets','Bags and jackets outside closet','Air fryer','Face roller (get back from Kris first)'].map(sub)}),
-      mk('Divide remaining stuff (keep vs throw away)', 'before', 'Move'),
-      mk('Reach out to family friend for moving tips', 'before', 'Move'),
-      mk('Remove wall-mounted stuff carefully', 'before', 'Move', {subitems:[sub('Figure out how to remove mirror stickers')]}),
-      mk('Do laundry (running low on clothes)', 'before', 'Move'),
-      mk('Deep clean room + take photos as proof', 'before', 'Move', {maybe:true}),
-      mk('Take photos of room', 'before', 'Move'),
-      mk('Go to gym and sauna at least once', 'before', 'Move'),
-      mk('Tub bath before you leave', 'before', 'Move'),
-      mk('Reply to Arbour email', 'before', 'Move'),
-      mk('Transfer WiFi to roommate\u2019s name', 'before', 'Move', {subitems:[sub('Get this month\u2019s WiFi cost back from roommate')]}),
-      mk('Offer roommate the portable dishwasher', 'before', 'Move'),
-      mk('Get building access card replacement ($100)', 'before', 'Move'),
-      mk('Wash the blanket from move-in', 'before', 'Move'),
-      // BEFORE - Trip Home
-      mk('Book India tickets', 'before', 'Trip Home'),
-      mk('Get study permit from family friend in Kits (needed to re-enter)', 'before', 'Trip Home'),
-      mk('Update US friend about changed plans', 'before', 'Trip Home'),
-      mk('Pick up souvenirs and gifts (Metrotown)', 'before', 'Trip Home'),
-      mk('Contact aunt re: airpod (courier to boyfriend)', 'before', 'Trip Home'),
-      // BEFORE - Documentation
-      mk('Check job applications (LinkedIn)', 'before', 'Documentation', {subitems:[sub('Note real application deadlines')]}),
-      // BEFORE - Health
-      mk('MSP reapplication follow-up', 'before', 'Health'),
-      mk('Birth control appointment at BCIT', 'before', 'Health', {subitems:[sub('Sort prescription / dosage before India')]}),
-      mk('ADHD appt Jul 29 (reschedule? you\u2019ll be in India)', 'before', 'Health'),
-      // BEFORE - School + Career
-      mk('Final internship presentation (Jul 23)', 'before', 'School + Career'),
-      mk('Work on ads for internship', 'before', 'School + Career'),
-      mk('Finish Questa project', 'before', 'School + Career'),
-      // BEFORE - Misc
-      mk('Follow up on money transfer if not landed by Thu', 'before', 'Miscellaneous'),
-      mk('Hisaab: log expenses', 'before', 'Miscellaneous'),
-      mk('Get iCloud link made (with Morsal)', 'before', 'Miscellaneous', {maybe:true}),
-      mk('Consolidate old lists (Keep, notebook, Excel)', 'before', 'Miscellaneous', {maybe:true}),
-      mk('United baggage claim (follow up on email chain)', 'before', 'Miscellaneous'),
-
-      // WHILE THERE
-      mk('Get Driving License Extract from Haryana RTO (in person)', 'while', 'Documentation'),
-      mk('Dentist appointment', 'while', 'Health'),
-      mk('Eye appointment', 'while', 'Health'),
-      mk('Therapist appointment', 'while', 'Health'),
-      mk('Lasik eye surgery', 'while', 'Health'),
-      mk('Research egg freezing options / consult', 'while', 'Health'),
-      mk('Send Dad resume', 'while', 'School + Career'),
-      mk('LinkedIn networking', 'while', 'School + Career', {subitems:[sub('LinkedIn subscription')]}),
-
-      // AFTER TRIP
-      mk('Unpack and settle into new room', 'after', 'Move'),
-      mk('Buy laundry hamper + bathroom trash bin', 'after', 'Move'),
-      mk('Apply for BC driver\u2019s license (by Oct 31)', 'after', 'Documentation'),
-      mk('Apply for PGWP (after final grades post, Sept)', 'after', 'Documentation', {subitems:[sub('Book English test slot (CELPIP)')]}),
-      mk('Taxes', 'after', 'Documentation', {subitems:[sub('Update SIN')]}),
-      mk('Family doctor search (prescription continuity)', 'after', 'Health'),
-      mk('Figure out Adobe subscription alternative', 'after', 'School + Career'),
-      mk('Apply to jobs', 'after', 'School + Career', {subitems:[sub('Update job tracker')]}),
-      mk('Migrate OneDrive files from school', 'after', 'Miscellaneous'),
-      mk('Figure out transit (was under school fees)', 'after', 'Miscellaneous')
-    ],
-    social: [
-      // BEFORE
-      mk('Text Canadian friends (FIFA plans)', 'before', null, {subitems:['Morsal','Sal-Aidana','Soroush','Nikki'].map(sub)}),
-      mk('Pool day with current building friends', 'before', null),
-      mk('Board game night in building', 'before', null),
-      mk('Reply to birthday messages', 'before', null, {subitems:[sub('Tapo')]}),
-      mk('Call best friend back', 'before', null),
-      mk('Hike (whenever it fits)', 'before', null),
-      // WHILE THERE
-      mk('Contact wedding people', 'while', null, {subitems:['Varun','Pritika','Bashy','Shailja','Seerat','Disha','Akansha','Arsu','Harsh','Shivam'].map(sub)}),
-      mk('Contact boys group', 'while', null, {subitems:['Apoorve','Mihir','Timmy'].map(sub)}),
-      mk('Other India friends', 'while', null, {subitems:['Rishabh','Nohar','Suhasini','Akshay R.','Sanya'].map(sub)}),
-      mk('Family check-ins', 'while', null, {subitems:['Masi','Anusha','Guddu didi'].map(sub)}),
-      // AFTER
-      mk('Reconnect with Canadian friends', 'after', null, {subitems:['Hargun','Nikita','Tia','Ajwani'].map(sub)}),
-      mk('Eventually reach out', 'after', null, {subitems:['Tapo? (also in bday)','Akriti (US)','Sunaina','Samiksha','Khyati (baby)'].map(sub)})
-    ]
-  };
-}
+function seed(){ return JSON.parse(JSON.stringify(SEED)); }
 
 async function load(){
-  try {
-    const r = await store.get(KEY);
-    data = r && r.value ? JSON.parse(r.value) : seed();
-  } catch(e){ data = seed(); }
-
+  try { const r = await store.get(KEY); data = r && r.value ? JSON.parse(r.value) : seed(); }
+  catch(e){ data = seed(); }
   if (data.lastReset !== todayStr()){
     data.recurring.forEach(x => x.done = false);
-    allTasks().forEach(item => {
-      if (item.starState === 'tomorrow'){ item.starState = 'today'; item.starredDate = todayStr(); }
-    });
+    allTasks().forEach(item => { if (item.starState === 'tomorrow'){ item.starState = 'today'; item.starredDate = todayStr(); } });
     data.lastReset = todayStr();
     save();
   }
-
+  try { const c = await store.get(COLLAPSE_KEY); collapsed = c && c.value ? JSON.parse(c.value) : {}; } catch(e){ collapsed = {}; }
   renderAll();
 }
 
 function save(){
   clearTimeout(saveT);
-  saveT = setTimeout(async () => {
-    try { await store.set(KEY, JSON.stringify(data)); } catch(e){}
-  }, 150);
+  saveT = setTimeout(async () => { try { await store.set(KEY, JSON.stringify(data)); } catch(e){} }, 150);
 }
+async function saveCollapse(){ try { await store.set(COLLAPSE_KEY, JSON.stringify(collapsed)); } catch(e){} }
 
 function allTasks(){ return data.overall.concat(data.social); }
 function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
@@ -388,133 +206,141 @@ function sortForDisplay(arr){ return arr.slice().sort((a,b) => (a.done?1:0)-(b.d
 function setStar(item, state){ item.starState = state; item.starredDate = state==='today' ? todayStr() : null; save(); renderAll(); }
 function toggleStarToday(item){ setStar(item, item.starState==='today' ? 'none' : 'today'); }
 function sendTomorrow(item){ setStar(item, 'tomorrow'); }
-function toggleDone(item){
-  item.done = !item.done;
-  if (item.done){ item.doneDate = todayStr(); item.maybe = false; }
-  else { item.doneDate = null; }
-  save(); renderAll();
-}
+function toggleDone(item){ item.done = !item.done; if (item.done){ item.doneDate = todayStr(); item.maybe = false; } else { item.doneDate = null; } save(); renderAll(); }
 function toggleMaybe(item){ item.maybe = !item.maybe; save(); renderAll(); }
 function toggleSub(s){ s.done = !s.done; save(); renderAll(); }
 function delTask(list, item){ const i=list.indexOf(item); if(i>-1) list.splice(i,1); save(); renderAll(); }
 
-/* nesting */
-function findOwnerList(id){
-  if (data.overall.some(t => t.id===id)) return data.overall;
-  if (data.social.some(t => t.id===id)) return data.social;
-  return null;
-}
+function findOwnerList(id){ if (data.overall.some(t => t.id===id)) return data.overall; if (data.social.some(t => t.id===id)) return data.social; return null; }
 function findParentOf(id){ return allTasks().find(t => t.subitems.some(s => s.id===id)) || null; }
 function nestTask(item){
-  const list = findOwnerList(item.id);
-  if (!list) return;
+  const list = findOwnerList(item.id); if (!list) return;
   const sib = list.filter(t => t.phase===item.phase && t.category===item.category);
-  const pos = sib.indexOf(item);
-  if (pos <= 0) return;
-  const parent = sib[pos-1];
-  const idx = list.indexOf(item);
-  list.splice(idx, 1);
+  const pos = sib.indexOf(item); if (pos <= 0) return;
+  const parent = sib[pos-1]; const idx = list.indexOf(item); list.splice(idx, 1);
   parent.subitems.push({ id:item.id, text:item.text, done:item.done });
   save(); renderAll();
 }
 function unnestSub(subItem){
-  const parent = findParentOf(subItem.id);
-  if (!parent) return;
-  const list = findOwnerList(parent.id);
-  if (!list) return;
-  const si = parent.subitems.findIndex(s => s.id===subItem.id);
-  if (si>-1) parent.subitems.splice(si, 1);
+  const parent = findParentOf(subItem.id); if (!parent) return;
+  const list = findOwnerList(parent.id); if (!list) return;
+  const si = parent.subitems.findIndex(s => s.id===subItem.id); if (si>-1) parent.subitems.splice(si, 1);
   const promoted = mk(subItem.text, parent.phase, parent.category, { done:subItem.done, doneDate: subItem.done?todayStr():null });
-  promoted.id = subItem.id;
-  const pIdx = list.indexOf(parent);
-  list.splice(pIdx+1, 0, promoted);
+  promoted.id = subItem.id; const pIdx = list.indexOf(parent); list.splice(pIdx+1, 0, promoted);
   save(); renderAll();
 }
-
-/* move parent up/down among its siblings (same phase+category) */
 function moveTask(item, dir){
-  const list = findOwnerList(item.id);
-  if (!list) return;
+  const list = findOwnerList(item.id); if (!list) return;
   const sib = list.filter(t => t.phase===item.phase && t.category===item.category && !t.done);
-  const pos = sib.indexOf(item);
-  const swapWith = sib[pos+dir];
-  if (!swapWith) return;
+  const pos = sib.indexOf(item); const swapWith = sib[pos+dir]; if (!swapWith) return;
   const iA = list.indexOf(item), iB = list.indexOf(swapWith);
-  list[iA] = swapWith; list[iB] = item;
+  list[iA] = swapWith; list[iB] = item; save(); renderAll();
+}
+function moveSub(parent, subItem, dir){
+  const arr = parent.subitems; const pos = arr.indexOf(subItem); const t = pos+dir;
+  if (t<0 || t>=arr.length) return;
+  arr[pos] = arr[t]; arr[t] = subItem; save(); renderAll();
+}
+
+/* Today's Picks ordering: fresh first, then pending, but honor manual todayOrder within */
+function orderedPicks(todays){
+  if (!data.todayOrder) data.todayOrder = [];
+  const rank = id => { const i = data.todayOrder.indexOf(id); return i===-1 ? 9999 : i; };
+  const fresh = todays.filter(t => t.starredDate===todayStr()).sort((a,b)=>rank(a.id)-rank(b.id));
+  const pending = todays.filter(t => t.starredDate!==todayStr()).sort((a,b)=>rank(a.id)-rank(b.id));
+  return fresh.concat(pending);
+}
+function movePick(todays, index, dir){
+  const ordered = orderedPicks(todays);
+  const t = index+dir; if (t<0 || t>=ordered.length) return;
+  const a = ordered[index], b = ordered[t];
+  const isFresh = x => x.starredDate===todayStr();
+  if (isFresh(a) !== isFresh(b)) return;
+  const ids = ordered.map(x=>x.id);
+  ids[index] = b.id; ids[t] = a.id;
+  data.todayOrder = ids;
   save(); renderAll();
 }
 
-function startEdit(txtEl, item, opts){
-  opts = opts || {};
-  const input = el('input','edit-input');
-  input.value = item.text;
-  txtEl.replaceWith(input);
-
-  let nestBtn = null;
-  if (opts.isSub){
-    nestBtn = el('div','nest-btn','\u2934 un-nest');
-    nestBtn.addEventListener('pointerdown', e => { e.preventDefault(); item.text = input.value.trim() || item.text; unnestSub(item); });
-  } else {
-    const list = findOwnerList(item.id);
-    const sib = list ? list.filter(t => t.phase===item.phase && t.category===item.category) : [];
-    if (sib.indexOf(item) > 0){
-      nestBtn = el('div','nest-btn','\u2937 make sub-task');
-      nestBtn.addEventListener('pointerdown', e => { e.preventDefault(); item.text = input.value.trim() || item.text; nestTask(item); });
-    }
-  }
-  if (nestBtn) input.after(nestBtn);
-
-  input.focus();
-  input.setSelectionRange(input.value.length, input.value.length);
+function startEdit(txtEl, item){
+  const input = el('input','edit-input'); input.value = item.text; txtEl.replaceWith(input);
+  input.focus(); input.setSelectionRange(input.value.length, input.value.length);
   const commit = () => { item.text = input.value.trim() || item.text; save(); renderAll(); };
   input.addEventListener('blur', () => setTimeout(commit, 120));
   input.addEventListener('keydown', e => { if(e.key==='Enter') input.blur(); });
 }
 
+function closeMenu(){ openMenuId = null; document.querySelectorAll('.menu').forEach(m=>m.remove()); }
+
+function buildMenu(item, opts){
+  const menu = el('div','menu');
+  const mi = (ico, label, cls, fn) => {
+    const it = el('div','menu-item'+(cls?' '+cls:''), '<span class="mi-ico">'+ico+'</span>'+label);
+    it.addEventListener('click', (e)=>{ e.stopPropagation(); closeMenu(); fn(); });
+    return it;
+  };
+  const maybeLabel = item.maybe ? 'Clear maybe' : 'Make maybe';
+  menu.appendChild(mi('\u25A1', maybeLabel, '', ()=>toggleMaybe(item)));
+  if (opts.isSub){
+    menu.appendChild(mi('\u2934', 'Un-nest', '', ()=>unnestSub(item)));
+    const reo = el('div','menu-reorder');
+    const up = el('span',null,'\u2303'); up.addEventListener('click',(e)=>{ e.stopPropagation(); moveSub(opts.parent, item, -1); });
+    const dn = el('span',null,'\u2304'); dn.addEventListener('click',(e)=>{ e.stopPropagation(); moveSub(opts.parent, item, 1); });
+    reo.appendChild(up); reo.appendChild(dn); menu.appendChild(reo);
+  } else {
+    menu.appendChild(mi('\u2937', 'Make sub-task', '', ()=>nestTask(item)));
+  }
+  menu.appendChild(mi('\u2715', 'Delete', 'danger', ()=>{
+    if (opts.isSub){ const p = findParentOf(item.id); if(p){ const i=p.subitems.indexOf(item); if(i>-1)p.subitems.splice(i,1); save(); renderAll(); } }
+    else { const list = findOwnerList(item.id); if(list) delTask(list, item); }
+  }));
+  return menu;
+}
+
 function makeRow(item, opts){
+  opts = opts || {};
   const row = el('div','row'+(opts.isSub?' sub':'')+(opts.pending?' pending':''));
   row.dataset.id = item.id;
-
   if (opts.reorder){
     const arrows = el('div','arrows');
     const up = el('div','arrow-btn','\u2303'); up.addEventListener('click', ()=>moveTask(item,-1));
     const dn = el('div','arrow-btn','\u2304'); dn.addEventListener('click', ()=>moveTask(item,1));
-    arrows.appendChild(up); arrows.appendChild(dn);
-    row.appendChild(arrows);
+    arrows.appendChild(up); arrows.appendChild(dn); row.appendChild(arrows);
   }
-  if (opts.subDraggable){
-    const handle = el('div','handle','\u22EE\u22EE');
-    handle.addEventListener('pointerdown', e => beginSubDrag(e, item, opts.parent));
-    row.appendChild(handle);
+  if (opts.pickReorder){
+    const pr = opts.pickReorder;
+    const arrows = el('div','arrows');
+    const up = el('div','arrow-btn','\u2303'); up.addEventListener('click', ()=>movePick(allTasks().filter(t=>t.starState==='today'), pr.index, -1));
+    const dn = el('div','arrow-btn','\u2304'); dn.addEventListener('click', ()=>movePick(allTasks().filter(t=>t.starState==='today'), pr.index, 1));
+    arrows.appendChild(up); arrows.appendChild(dn); row.appendChild(arrows);
   }
-
   const box = el('div','box'+(opts.isSub?' sm':'')+(item.done?' done':'')+(!item.done && item.maybe ? ' maybe':''), CHECK);
-  let pressTimer=null, longFired=false;
-  box.addEventListener('pointerdown', () => { longFired=false; pressTimer=setTimeout(()=>{ longFired=true; toggleMaybe(item); }, 550); });
-  box.addEventListener('pointerup', () => { clearTimeout(pressTimer); if(!longFired) toggleDone(item); });
-  box.addEventListener('pointerleave', () => clearTimeout(pressTimer));
+  box.addEventListener('click', ()=>toggleDone(item));
   row.appendChild(box);
-
   const txt = el('div','txt'+(item.done?' done':'')+(!item.done && item.maybe?' maybe':''), escapeHtml(item.text));
-  txt.addEventListener('click', () => startEdit(txt, item, { isSub: !!opts.isSub }));
+  txt.addEventListener('click', () => startEdit(txt, item));
   row.appendChild(txt);
-
   if (item.done && item.doneDate) row.appendChild(el('div','done-date', shortDate(item.doneDate)));
-
   if (opts.showStar){
     const star = el('div','star'+(item.starState==='today'?' on':''), item.starState==='today'?'\u2605':'\u2606');
-    star.addEventListener('click', () => toggleStarToday(item));
-    row.appendChild(star);
+    star.addEventListener('click', () => toggleStarToday(item)); row.appendChild(star);
   }
   if (opts.showTomorrow){
-    const tb = el('div','tmrw-btn','\u2192');
-    tb.title = 'Move to tomorrow';
-    tb.addEventListener('click', () => sendTomorrow(item));
-    row.appendChild(tb);
+    const tb = el('div','tmrw-btn','\u2192'); tb.addEventListener('click', () => sendTomorrow(item)); row.appendChild(tb);
   }
-  if (opts.onDelete){
-    const del = el('div','del','\u00d7');
-    del.addEventListener('click', opts.onDelete);
+  if (opts.showMenu){
+    const dots = el('div','dots','\u22EE');
+    dots.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      if (openMenuId === item.id){ closeMenu(); return; }
+      closeMenu(); openMenuId = item.id;
+      const menu = buildMenu(item, opts); row.appendChild(menu);
+    });
+    row.appendChild(dots);
+  }
+  if (opts.recDelete){
+    const del = el('div','dots','\u00d7');
+    del.addEventListener('click', ()=>{ const i=data.recurring.indexOf(item); if(i>-1) data.recurring.splice(i,1); save(); renderAll(); });
     row.appendChild(del);
   }
   return row;
@@ -526,8 +352,7 @@ function makeAddRow(placeholder, onAdd){
   const inline = el('div','add-inline');
   const input = el('input'); input.placeholder = placeholder;
   const btn = el('button', null, '\u2192');
-  inline.appendChild(input); inline.appendChild(btn);
-  wrap.appendChild(toggle); wrap.appendChild(inline);
+  inline.appendChild(input); inline.appendChild(btn); wrap.appendChild(toggle); wrap.appendChild(inline);
   toggle.addEventListener('click', () => { inline.classList.add('show'); toggle.style.display='none'; input.focus(); });
   const go = () => { const v=input.value.trim(); if(v){ onAdd(v); input.value=''; inline.classList.remove('show'); toggle.style.display='block'; } };
   btn.addEventListener('click', go);
@@ -535,14 +360,12 @@ function makeAddRow(placeholder, onAdd){
   return wrap;
 }
 
-/* ---------- TODAY ---------- */
+/* ---------- TODAY (Picks, then Tomorrow, then Recurring) ---------- */
 function renderToday(){
-  const v = document.getElementById('view-today');
-  v.innerHTML = '';
+  const v = document.getElementById('view-today'); v.innerHTML = '';
   const d = new Date();
   v.appendChild(el('div','date-line', d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'})));
 
-  // progress across today's active picks + recurring
   const todays = allTasks().filter(t => t.starState==='today');
   const recDone = data.recurring.filter(r=>r.done).length;
   const totalToday = todays.length + data.recurring.length;
@@ -555,68 +378,71 @@ function renderToday(){
   const activePicks = todays.filter(t=>!t.done);
   v.appendChild(el('div','busy-tag'+(activePicks.length>6?' show':''), 'Busy day! Let\u2019s focus your top tasks.'));
 
-  // Recurring
-  v.appendChild(el('div','section-label first','Recurring'));
-  const rc = el('div','card');
-  sortForDisplay(data.recurring).forEach(item => rc.appendChild(makeRow(item, { showStar:false })));
-  v.appendChild(rc);
-
-  // Today's Picks
-  v.appendChild(el('div','section-label','Today\u2019s Picks'));
+  v.appendChild(el('div','section-label first','Today\u2019s Picks'));
   const pc = el('div','card');
-  if (todays.length===0){
-    pc.appendChild(el('div','empty','Nothing picked yet. Star a task in Overall or Social.'));
-  } else {
-    const fresh = todays.filter(t => t.starredDate===todayStr());
-    const pending = todays.filter(t => t.starredDate!==todayStr());
-    fresh.concat(pending).forEach(item => {
-      pc.appendChild(makeRow(item, { showStar:true, showTomorrow:true, pending: pending.includes(item) }));
-      item.subitems.forEach(s => pc.appendChild(makeRow(s, {isSub:true})));
+  if (todays.length===0){ pc.appendChild(el('div','empty','Nothing picked yet. Star a task in Overall or Social.')); }
+  else {
+    if (!data.todayOrder) data.todayOrder = [];
+    const ordered = orderedPicks(todays);
+    ordered.forEach((item, i) => {
+      pc.appendChild(makeRow(item, { showStar:true, showTomorrow:true, showMenu:true,
+        pending: item.starredDate!==todayStr(),
+        pickReorder: { count: ordered.length, index: i } }));
+      item.subitems.forEach(s => pc.appendChild(makeRow(s, {isSub:true, showMenu:true, parent:item})));
     });
   }
   v.appendChild(pc);
 
-  // Tomorrow
   const tmrw = allTasks().filter(t => t.starState==='tomorrow');
-  v.appendChild(el('div','section-label','Tomorrow'));
+  const td = new Date(); td.setDate(td.getDate()+1);
+  const ord = (n)=>{ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); };
+  const tmrwLabel = 'Tomorrow  \u00b7  ' + ord(td.getDate()) + ' ' + td.toLocaleDateString('en-US',{month:'short'});
+  v.appendChild(el('div','section-label', tmrwLabel));
   const tc = el('div','card');
-  if (tmrw.length===0){
-    tc.appendChild(el('div','empty','Nothing queued for tomorrow yet. Tap \u2192 on a pick to send it here.'));
-  } else {
-    tmrw.forEach(item => tc.appendChild(makeRow(item, { showStar:true })));
-  }
+  if (tmrw.length===0){ tc.appendChild(el('div','empty','Nothing queued for tomorrow yet. Tap \u2192 on a pick to send it here.')); }
+  else { tmrw.forEach(item => tc.appendChild(makeRow(item, { showStar:true, showMenu:true }))); }
   v.appendChild(tc);
 
-  // export / import links, quiet, bottom of Today only
+  v.appendChild(el('div','section-label','Recurring'));
+  const rc = el('div','card');
+  sortForDisplay(data.recurring).forEach(item => rc.appendChild(makeRow(item, { showMenu:false, recDelete:true })));
+  rc.appendChild(makeAddRow('Add a daily habit...', (val)=>{ data.recurring.push({id:uid(), text:val, done:false}); save(); renderAll(); }));
+  v.appendChild(rc);
+
   const links = el('div','data-links');
   const exp = el('span','link','Export data'); exp.addEventListener('click', ()=>openModal('export'));
   const imp = el('span','link','Import data'); imp.addEventListener('click', ()=>openModal('import'));
-  links.appendChild(exp);
-  links.appendChild(el('span','sep','|'));
-  links.appendChild(imp);
+  links.appendChild(exp); links.appendChild(el('span','sep','|')); links.appendChild(imp);
   v.appendChild(links);
+}
+
+function phaseHeader(pk, label, cls){
+  const key = 'phase-'+pk;
+  const isCol = !!collapsed[key];
+  const tag = el('span','phase-tag '+cls+(isCol?' collapsed':''), '<span class="caret">\u25BC</span>'+label);
+  tag.addEventListener('click', ()=>{ collapsed[key] = !collapsed[key]; saveCollapse(); renderAll(); });
+  return { tag, isCol };
 }
 
 /* ---------- OVERALL ---------- */
 function renderOverall(){
-  const v = document.getElementById('view-overall');
-  v.innerHTML = '';
+  const v = document.getElementById('view-overall'); v.innerHTML = '';
   v.appendChild(el('div','date-line','All Tasks'));
-
   PHASES.forEach(([pk,label,cls]) => {
     const inPhase = data.overall.filter(t => t.phase===pk);
     if (inPhase.length===0) return;
-    v.appendChild(el('span','phase-tag '+cls, label));
+    const { tag, isCol } = phaseHeader(pk, label, cls);
+    v.appendChild(tag);
+    if (isCol) return;
     CAT_ORDER.forEach(cat => {
       const items = inPhase.filter(t => t.category===cat);
       if (items.length===0) return;
-      const card = el('div','card');
-      card.dataset.phase = pk; card.dataset.category = cat;
+      const card = el('div','card'); card.dataset.phase = pk; card.dataset.category = cat;
       const doneN = items.filter(t=>t.done).length;
       card.appendChild(el('div','cat-head '+(cls||'before'), '<span>'+cat+'</span><span class="cat-count">'+doneN+' / '+items.length+'</span>'));
       sortForDisplay(items).forEach(item => {
-        card.appendChild(makeRow(item, { showStar:true, reorder: !item.done, onDelete:()=>delTask(data.overall, item) }));
-        item.subitems.forEach(s => card.appendChild(makeRow(s, {isSub:true, subDraggable:true, parent:item})));
+        card.appendChild(makeRow(item, { showStar:true, showMenu:true, reorder: !item.done }));
+        item.subitems.forEach(s => card.appendChild(makeRow(s, {isSub:true, showMenu:true, parent:item})));
       });
       card.appendChild(makeAddRow('Add to '+cat+'...', (val)=>{ data.overall.push(mk(val, pk, cat)); save(); renderAll(); }));
       v.appendChild(card);
@@ -626,20 +452,19 @@ function renderOverall(){
 
 /* ---------- SOCIAL ---------- */
 function renderSocial(){
-  const v = document.getElementById('view-social');
-  v.innerHTML = '';
+  const v = document.getElementById('view-social'); v.innerHTML = '';
   v.appendChild(el('div','date-line','Social'));
   v.appendChild(el('div','date-sub','People & Plans! Low priority, no pressure.'));
-
   PHASES.forEach(([pk,label,cls]) => {
     const items = data.social.filter(t => t.phase===pk);
     if (items.length===0) return;
-    v.appendChild(el('span','phase-tag '+cls, label));
-    const card = el('div','card');
-    card.dataset.phase = pk;
+    const { tag, isCol } = phaseHeader('social-'+pk, label, cls);
+    v.appendChild(tag);
+    if (isCol) return;
+    const card = el('div','card'); card.dataset.phase = pk;
     sortForDisplay(items).forEach(item => {
-      card.appendChild(makeRow(item, { showStar:true, reorder: !item.done, onDelete:()=>delTask(data.social, item) }));
-      item.subitems.forEach(s => card.appendChild(makeRow(s, {isSub:true, subDraggable:true, parent:item})));
+      card.appendChild(makeRow(item, { showStar:true, showMenu:true, reorder: !item.done }));
+      item.subitems.forEach(s => card.appendChild(makeRow(s, {isSub:true, showMenu:true, parent:item})));
     });
     card.appendChild(makeAddRow('Add to '+label+'...', (val)=>{ data.social.push(mk(val, pk, null)); save(); renderAll(); }));
     v.appendChild(card);
@@ -648,11 +473,11 @@ function renderSocial(){
 
 function renderAll(){
   const st = document.getElementById('screen').scrollTop;
+  closeMenu();
   renderToday(); renderOverall(); renderSocial();
   document.getElementById('screen').scrollTop = st;
 }
 
-/* Tabs */
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -663,46 +488,9 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-/* ---------- Sub-item drag reorder (within a parent) ---------- */
-let subDrag = null;
-function beginSubDrag(e, subItem, parent){
-  e.preventDefault();
-  const row = e.target.closest('.row');
-  row.classList.add('dragging');
-  const ghost = el('div','ghost', escapeHtml(subItem.text));
-  document.body.appendChild(ghost);
-  ghost.style.left=(e.clientX+12)+'px'; ghost.style.top=(e.clientY+12)+'px';
-  subDrag = { subItem, parent, row, ghost };
-  document.addEventListener('pointermove', onSubMove);
-  document.addEventListener('pointerup', onSubEnd, {once:true});
-}
-function onSubMove(e){
-  if(!subDrag) return;
-  subDrag.ghost.style.left=(e.clientX+12)+'px'; subDrag.ghost.style.top=(e.clientY+12)+'px';
-}
-function onSubEnd(e){
-  document.removeEventListener('pointermove', onSubMove);
-  if(!subDrag) return;
-  const { subItem, parent, row, ghost } = subDrag;
-  ghost.remove(); row.classList.remove('dragging');
-  const el2 = document.elementFromPoint(e.clientX, e.clientY);
-  const targetRow = el2 ? el2.closest('.row[data-id]') : null;
-  if (targetRow && targetRow.dataset.id !== subItem.id){
-    const tIdx = parent.subitems.findIndex(s => s.id===targetRow.dataset.id);
-    if (tIdx > -1){
-      const rect = targetRow.getBoundingClientRect();
-      const before = e.clientY < rect.top + rect.height/2;
-      const cur = parent.subitems.indexOf(subItem);
-      if (cur>-1) parent.subitems.splice(cur,1);
-      let idx = parent.subitems.findIndex(s => s.id===targetRow.dataset.id);
-      if (idx<0) idx = parent.subitems.length;
-      parent.subitems.splice(before?idx:idx+1, 0, subItem);
-      save();
-    }
-  }
-  subDrag = null;
-  renderAll();
-}
+document.getElementById('screen').addEventListener('click', (e)=>{
+  if (!e.target.closest('.menu') && !e.target.closest('.dots')) closeMenu();
+});
 
 /* ---------- Export / Import ---------- */
 const modalBg = document.getElementById('modalBg');
@@ -712,30 +500,24 @@ function openModal(mode){
   const ta = document.getElementById('modalText');
   const actions = document.getElementById('modalActions');
   actions.innerHTML = '';
-
   if (mode==='export'){
     title.textContent = 'Export data';
     desc.textContent = 'This is your whole list as text. Copy all of it and paste it to Claude when you want a big set of changes made.';
-    ta.value = JSON.stringify(data);
-    ta.readOnly = true;
-    const copy = el('button','btn-primary','Copy'); 
+    ta.value = JSON.stringify(data); ta.readOnly = true;
+    const copy = el('button','btn-primary','Copy');
     copy.addEventListener('click', () => { ta.select(); document.execCommand('copy'); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200); });
     const close = el('button','btn-ghost','Close'); close.addEventListener('click', closeModal);
     actions.appendChild(copy); actions.appendChild(close);
   } else {
     title.textContent = 'Import data';
     desc.textContent = 'Paste the updated text from Claude here. This replaces your current list completely, so only import text that already has everything in it.';
-    ta.value = '';
-    ta.readOnly = false;
+    ta.value = ''; ta.readOnly = false;
     const load2 = el('button','btn-primary','Replace my list');
     load2.addEventListener('click', () => {
       let parsed;
-      try { parsed = JSON.parse(ta.value.trim()); }
-      catch(e){ alert('That doesn\u2019t look like valid list text. Check you copied all of it.'); return; }
+      try { parsed = JSON.parse(ta.value.trim()); } catch(e){ alert('That doesn\u2019t look like valid list text. Check you copied all of it.'); return; }
       if (!parsed || !parsed.overall){ alert('That text is missing the list data.'); return; }
-      if (confirm('This will replace your current list completely. Continue?')){
-        data = parsed; save(); closeModal(); renderAll();
-      }
+      if (confirm('This will replace your current list completely. Continue?')){ data = parsed; save(); closeModal(); renderAll(); }
     });
     const close = el('button','btn-ghost','Cancel'); close.addEventListener('click', closeModal);
     actions.appendChild(load2); actions.appendChild(close);
